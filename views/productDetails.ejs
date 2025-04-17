@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= product.brand %> - <%= product.productName %> | TrendNest</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="/stylesheet/index.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        .product-details-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .product-image {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        .product-info {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .price-tag {
+            font-size: 1.5rem;
+            color: #2563eb;
+            font-weight: bold;
+        }
+        .discount-tag {
+            color: #22c55e;
+            font-weight: 500;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .action-buttons button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .add-to-cart {
+            background: #2563eb;
+            color: white;
+        }
+        .add-to-cart:hover {
+            background: #1d4ed8;
+        }
+        .like-button {
+            background: white;
+            border: 1px solid #e5e7eb;
+            color: #6b7280;
+        }
+        .like-button:hover {
+            background: #f3f4f6;
+        }
+        .like-button.liked {
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body class="bg-zinc-300">
+    <div class="user-info bg-gray-800 p-4 text-white flex justify-between" style="padding: 10px;">
+        <div class="flex items-center space-x-4">
+            <% if(user) { %>
+                <img src="<%= user.imgurl || '/images/default/profile_default.webp' %>" alt="Profile" class="w-12 h-12 rounded-full">
+                <div>
+                    <h2 class="text-xl font-bold"><%= user.name %></h2>
+                    <p class="text-gray-400"><%= user.email %></p>
+                </div>
+            <% } else { %>
+                <h2 class="text-xl font-bold">TrendNest</h2>
+            <% } %>
+        </div>
+        <div class="flex items-center space-x-4">
+            <% if(user) { %>
+                <a href="/mycart" class="text-white hover:text-gray-300" style="margin-right: 20px;">My Cart</a>
+                <a href="/liked" class="text-white hover:text-gray-300" style="margin-right: 20px;">Liked Products</a>
+
+            <% } else { %>
+                <a href="/login" class="text-white hover:text-gray-300">Login</a>
+                <a href="/signup" class="text-white hover:text-gray-300">Sign Up</a>
+            <% } %>
+        </div>
+    </div>
+
+    <div class="product-details-container">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+                <img src="<%= product.imgurl %>" 
+                     alt="<%= product.productName %>" 
+                     class="product-image"
+                     onerror="this.onerror=null; this.src='/images/default-product.png'">
+            </div>
+            <div class="product-info">
+                <h1 class="text-3xl font-bold mb-4"><%= product.brand %></h1>
+                <h2 class="text-2xl mb-4"><%= product.productName %></h2>
+                
+                <div class="mb-6">
+                    <span class="price-tag">₹<%= product.prize %></span>
+                    <span class="discount-tag ml-4"><%= product.discount %>% off</span>
+                </div>
+
+                <div class="action-buttons">
+                    <form action="/addcart" method="post" class="flex-1">
+                        <input type="hidden" name="productId" value="<%= product._id %>">
+                        <button type="submit" class="add-to-cart w-full">
+                            <i class="fas fa-shopping-cart mr-2"></i>Add to Cart
+                        </button>
+                    </form>
+                    
+                    <% if(user) { %>
+                        <button class="like-button <%= userLikes.includes(product._id.toString()) ? 'liked' : '' %>" 
+                                data-product-id="<%= product._id %>">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Handle like button clicks
+        document.querySelectorAll('.like-button').forEach(button => {
+            button.addEventListener('click', async function() {
+                const productId = this.dataset.productId;
+                try {
+                    const response = await fetch('/like', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ productId })
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        this.classList.toggle('liked');
+                    }
+                } catch (error) {
+                    console.error('Like error:', error);
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

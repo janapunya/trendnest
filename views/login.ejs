@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="/stylesheet/login.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body>
+    <div class="main bg-zinc-900">
+        <div class="main_form ">
+            <div class="hading"><h1>Welcome trendnest</h1></div>
+            <form action="/login" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" accept="image/*" required id="image"> 
+                <div class="image">
+                    <img src="/images/default/profile_default.webp" alt="Your image" id="Profile_image">
+                    <div class="uplode_image"><label for="image" >Uplode Your image</label></div>
+                </div>
+                                      
+                <div><input type="text" name="name" placeholder="name" required></div>
+                <div><input type="number" name="phnumber" placeholder="phone number" required></div>
+                <div><input type="number" name="age" placeholder="age" required></div>
+                <div><input type="email" name="email" placeholder="email" required></div>
+                <% if(error){%>
+                    <script>
+                        setTimeout(() => {
+                            document.querySelector('.error-message').remove();
+                        }, 3000);
+                    </script>
+                    <center><p class="text-sm text-red-500 mt-1 error-message"><%= error %></p></center>
+                <%}%>
+                <div><input type="password" name="password" placeholder="password" required></div>
+                <input type="submit" value="submit" class="submit bg-blue-500 hover:bg-sky-700">
+                <div><center><a href="/signup">Already have an account</a></center></div>
+            </form>
+        </div>
+    </div>
+    <script src="/javascript/login.js"></script>
+</body>
+</html>

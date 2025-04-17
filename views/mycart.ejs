@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>My Cart - TrendNest</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" href="/stylesheet/sell.css">
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+        <style>
+            .cart-item {
+                background: white;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                margin-bottom: 20px;
+            }
+            .product-image {
+                width: 100px;
+                height: 100px;
+                object-fit: cover;
+            }
+        </style>
+    </head>
+<body class="bg-gray-100">
+    <div class="bg-zinc-300 main">
+        <% if(user) { %>
+            <div class="user-info bg-gray-800 p-4 text-white flex justify-between">
+                <div class="flex items-center space-x-4">
+                    <img src="<%=user.imgurl || '/images/default/profile_default.webp' %>" alt="Profile" class="w-12 h-12 rounded-full">
+                    <div>
+                        <h2 class="text-xl font-bold"><%= user.name %></h2>
+                        <p class="text-gray-400"><%= user.email %></p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/" class="text-white hover:text-gray-300">Home</a>
+                </div>
+            </div>
+        <% } %>
+
+        <h1 class="text-2xl font-bold m-8">My Cart</h1>
+
+        <% if (error) { %>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative m-4" role="alert">
+                <span class="block sm:inline"><%= error %></span>
+            </div>
+        <% } %>
+
+        <div class="p-4">
+            <% if (alldata && alldata.length > 0) { %>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="md:col-span-2">
+                        <% alldata.forEach(function(product, index) { %>
+                            <div class="cart-item p-4">
+                                <div class="flex items-center space-x-4">
+                                    <img src="<%= product.imgurl %>" alt="<%= product.productName %>" class="product-image">
+                                    <div class="flex-1">
+                                        <h3 class="font-bold"><%= product.brand %> - <%= product.productName %></h3>
+                                        <p class="text-gray-600">₹<%= product.prize %> (<%= product.discount %>% off)</p>
+                                    </div>
+                                    <div>
+                                        <button class="remove-from-cart bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                                            data-product-id="<%= product._id %>">
+                                            Remove
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                    <div>
+                        <div class="bg-white p-4 rounded-lg shadow">
+                            <h2 class="text-xl font-bold mb-4">Order Summary</h2>
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span>Subtotal</span>
+                                    <span>₹<%= alldata.reduce((sum, product) => sum + product.prize, 0) %></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span>Discount</span>
+                                    <span>-₹<%= alldata.reduce((sum, product) => sum + (product.prize * product.discount / 100), 0) %></span>
+                                </div>
+                                <div class="border-t pt-2">
+                                    <div class="flex justify-between font-bold">
+                                        <span>Total</span>
+                                        <span>₹<%= alldata.reduce((sum, product) => sum + (product.prize * (1 - product.discount / 100)), 0) %></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <form id="checkout-form" class="mt-4">
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 text-sm font-bold mb-2" for="address">
+                                        Shipping Address
+                                    </label>
+                                    <textarea id="address" name="address" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required></textarea>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 text-sm font-bold mb-2" for="city">
+                                        City
+                                    </label>
+                                    <input type="text" id="city" name="city" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 text-sm font-bold mb-2" for="state">
+                                        State
+                                    </label>
+                                    <input type="text" id="state" name="state" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 text-sm font-bold mb-2" for="pincode">
+                                        Pincode
+                                    </label>
+                                    <input type="text" id="pincode" name="pincode" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 text-sm font-bold mb-2" for="payment-method">
+                                        Payment Method
+                                    </label>
+                                    <select id="payment-method" name="paymentMethod" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                                        <option value="COD">Cash on Delivery</option>
+                                        <option value="UPI">UPI</option>
+                                        <option value="Card">Card</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full">
+                                    Place Order
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            <% } else { %>
+                <div class="text-center py-8">
+                    <p class="text-gray-600 text-lg">Your cart is empty.</p>
+                    <a href="/" class="text-blue-500 hover:text-blue-700 mt-4 inline-block">Continue Shopping</a>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <script>
+        // Remove from cart functionality
+        document.querySelectorAll('.remove-from-cart').forEach(button => {
+            button.addEventListener('click', async function() {
+                const productId = this.dataset.productId;
+                try {
+                    const response = await fetch('/deletecart', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ deleteData: productId })
+                    });
+                    if (response.ok) {
+                        location.reload();
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+
+        // Checkout form submission
+        document.getElementById('checkout-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const products = [
+                <% alldata.forEach(function(product) { %>
+                    {
+                        productId: '<%= product._id %>',
+                        quantity: 1,
+                        price: <%= product.prize * (1 - product.discount / 100) %>
+                    },
+                <% }) %>
+            ];
+
+            const shippingAddress = {
+                address: document.getElementById('address').value,
+                city: document.getElementById('city').value,
+                state: document.getElementById('state').value,
+                pincode: document.getElementById('pincode').value
+            };
+
+            const paymentMethod = document.getElementById('payment-method').value;
+
+            try {
+                const response = await fetch('/createorder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        products,
+                        shippingAddress,
+                        paymentMethod
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    window.location.href = '/myorders';
+                } else {
+                    alert(data.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to place order');
+            }
+        });
+    </script>
+</body>
+</html>

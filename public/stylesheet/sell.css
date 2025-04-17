@@ -1,0 +1,20 @@
+.card{
+    display: flex;
+    margin-left: 70px;
+    margin-bottom: 20px;
+    background-color: oklch(20.8% 0.042 265.755);
+    color: #fff;
+}
+.product_details,.delete{
+    margin-right: 50px;
+    margin-top: 20px;
+    font-size: 1.20rem;
+}
+@media(max-width:570px){
+    .card{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+}

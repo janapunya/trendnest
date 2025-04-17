@@ -1,0 +1,43 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    color: oklch(98.4% 0.019 200.873);
+    
+}
+.main{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.form_section{
+    display: grid;
+    justify-content: center;
+    gap: 20px;
+
+}
+.signup{
+    border: 2px solid black;
+    height: 42  0px;
+    width: 350px;
+    padding: 5px;
+}
+.form_section input{
+    height: 45px;
+    width: 300px;
+    font-size: medium;
+    border-radius: 10px;
+    position: relative;
+    border: 2px  solid oklch(98.4% 0.019 200.873);
+    padding-left: 20px;
+}
+.main_head p{
+    margin: 10px;
+}
+.form_section .forget_password{
+    height: 30px;
+    width: 80%;
+    margin: auto;
+    border: none;
+}

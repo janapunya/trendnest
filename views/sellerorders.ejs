@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Orders - TrendNest</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="/stylesheet/sell.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        .order-item {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .product-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="bg-zinc-300 main">
+        <% if(user) { %>
+            <div class="user-info bg-gray-800 p-4 text-white flex justify-between">
+                <div class="flex items-center space-x-4">
+                    <img src="<%=user.imgurl || '/images/default/profile_default.webp' %>" alt="Profile" class="w-12 h-12 rounded-full">
+                    <div>
+                        <h2 class="text-xl font-bold"><%= user.name %></h2>
+                        <p class="text-gray-400"><%= user.email %></p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/sell" class="text-white hover:text-gray-300">Back to Products</a>
+                </div>
+            </div>
+        <% } %>
+
+        <h1 class="text-2xl font-bold m-8">Customer Orders</h1>
+
+        <% if (error) { %>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative m-4" role="alert">
+                <span class="block sm:inline"><%= error %></span>
+            </div>
+        <% } %>
+
+        <div class="p-4">
+            <% if (orders && orders.length > 0) { %>
+                <% orders.forEach(function(order) { %>
+                    <div class="order-item p-4 mb-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <div>
+                                <p class="text-gray-600">Order ID: <%= order._id %></p>
+                                <p class="text-gray-600">Customer Email: <%= order.email %></p>
+                                <p class="text-gray-600">Order Date: <%= new Date(order.createdAt).toLocaleDateString() %></p>
+                            </div>
+                            <div>
+                                <span class="px-3 py-1 rounded-full text-sm font-semibold
+                                    <%= order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+                                       order.status === 'processing' ? 'bg-blue-100 text-blue-800' :
+                                       order.status === 'shipped' ? 'bg-purple-100 text-purple-800' :
+                                       order.status === 'delivered' ? 'bg-green-100 text-green-800' :
+                                       'bg-red-100 text-red-800' %>">
+                                    <%= order.status %>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="border-t pt-4">
+                            <h3 class="font-bold mb-2">Products:</h3>
+                            <% order.products.forEach(function(item) { %>
+                                <% if (item.productId && item.productId.email === user.email) { %>
+                                    <div class="flex items-center space-x-4 mb-2">
+                                        <img src="<%= item.productId.imgurl %>" 
+                                             alt="<%= item.productId.productName %>" 
+                                             class="product-image"
+                                             onerror="this.onerror=null; this.src='/images/default-product.png'">
+                                        <div class="flex-1">
+                                            <h4 class="font-bold"><%= item.productId.brand %> - <%= item.productId.productName %></h4>
+                                            <p class="text-gray-600">Quantity: <%= item.quantity %></p>
+                                            <p class="text-gray-600">Price: ₹<%= item.price %></p>
+                                        </div>
+                                    </div>
+                                <% } %>
+                            <% }) %>
+                        </div>
+
+                        <div class="border-t pt-4 mt-4">
+                            <h3 class="font-bold mb-2">Shipping Details:</h3>
+                            <p class="text-gray-600">Address: <%= order.shippingAddress.address %></p>
+                            <p class="text-gray-600">City: <%= order.shippingAddress.city %></p>
+                            <p class="text-gray-600">State: <%= order.shippingAddress.state %></p>
+                            <p class="text-gray-600">Pincode: <%= order.shippingAddress.pincode %></p>
+                        </div>
+
+                        <div class="border-t pt-4 mt-4">
+                            <p class="text-gray-600">Payment Method: <%= order.paymentMethod %></p>
+                            <p class="text-gray-600 font-bold">Total Amount: ₹<%= order.totalAmount %></p>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <div class="text-center py-8">
+                    <p class="text-gray-600 text-lg">No orders found.</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</body>
+</html> 

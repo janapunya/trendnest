@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="/stylesheet/login.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+<body>
+    <div class="main bg-zinc-900">
+        <div class="main_form">
+            <div class="hading"><h1>Sign In</h1></div>
+            <form id="signinForm" action="/signup" method="post">
+                <div><input type="email" name="email" id="emailInput" placeholder="Email" required></div>
+                <div><input type="password" name="password" placeholder="Password" required></div>
+                <% if(error){%>
+                    <script>
+                        setTimeout(() => {
+                            document.querySelector('.error-message').remove();
+                        }, 3000);
+                    </script>
+                    <center><p class="text-sm text-red-500 mt-1 error-message"><%= error %></p></center>
+                <%}%>
+                <input type="submit" value="Sign In" class="submit bg-blue-500 hover:bg-sky-700">
+            </form>
+            <div class="mt-4 text-center">
+                <p class="text-sm text-gray-400">Don't have an account? <a href="/login" class="text-blue-500 hover:text-blue-700">Login</a></p>
+                <p class="text-sm text-gray-400 mt-2">
+                    <button onclick="submitForgotPassword()" class="text-blue-500 hover:text-blue-700">Forgot Password?</button>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function submitForgotPassword() {
+            const email = document.getElementById('emailInput').value;
+            if (!email) {
+                alert('Please enter your email first');
+                return;
+            }
+            
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/forgot-password';
+            
+            const emailInput = document.createElement('input');
+            emailInput.type = 'hidden';
+            emailInput.name = 'email';
+            emailInput.value = email;
+            
+            form.appendChild(emailInput);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders - TrendNest</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        .order-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .product-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .status-pending { background-color: #fef3c7; color: #92400e; }
+        .status-processing { background-color: #dbeafe; color: #1e40af; }
+        .status-shipped { background-color: #e0e7ff; color: #3730a3; }
+        .status-delivered { background-color: #dcfce7; color: #166534; }
+        .status-cancelled { background-color: #fee2e2; color: #991b1b; }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="bg-zinc-300 main">
+        <% if(user) { %>
+            <div class="user-info bg-gray-800 p-4 text-white flex justify-between">
+                <div class="flex items-center space-x-4">
+                    <img src="<%=user.imgurl || '/images/default/profile_default.webp' %>" alt="Profile" class="w-12 h-12 rounded-full">
+                    <div>
+                        <h2 class="text-xl font-bold"><%= user.name %></h2>
+                        <p class="text-gray-400"><%= user.email %></p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/" class="text-white hover:text-gray-300">Home</a>
+                </div>
+            </div>
+        <% } %>
+
+        <h1 class="text-2xl font-bold m-8">My Orders</h1>
+
+        <% if (error) { %>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative m-4" role="alert">
+                <span class="block sm:inline"><%= error %></span>
+            </div>
+        <% } %>
+
+        <div class="p-4">
+            <% if (orders && orders.length > 0) { %>
+                <% orders.forEach(function(order) { %>
+                    <div class="order-card p-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <div>
+                                <p class="text-gray-600">Order #<%= order._id %></p>
+                                <p class="text-sm text-gray-500">Placed on <%= new Date(order.createdAt).toLocaleDateString() %></p>
+                            </div>
+                            <div>
+                                <span class="status-badge status-<%= order.status %>">
+                                    <%= order.status.charAt(0).toUpperCase() + order.status.slice(1) %>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="border-t pt-4">
+                            <% order.products.forEach(function(item) { %>
+                                <div class="flex items-center space-x-4 mb-4">
+                                    <img src="<%= item.productId.imgurl %>" alt="<%= item.productId.productName %>" class="product-image">
+                                    <div class="flex-1">
+                                        <h3 class="font-bold"><%= item.productId.brand %> - <%= item.productId.productName %></h3>
+                                        <p class="text-gray-600">Quantity: <%= item.quantity %></p>
+                                        <p class="text-gray-600">Price: ₹<%= item.price %></p>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+
+                        <div class="border-t pt-4">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-gray-600">Shipping Address:</p>
+                                    <p><%= order.shippingAddress.address %>, <%= order.shippingAddress.city %></p>
+                                    <p><%= order.shippingAddress.state %>, <%= order.shippingAddress.pincode %></p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-gray-600">Payment Method:</p>
+                                    <p><%= order.paymentMethod %></p>
+                                    <p class="font-bold mt-2">Total: ₹<%= order.totalAmount %></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <% if (order.status === 'pending') { %>
+                            <div class="border-t pt-4 mt-4">
+                                <button class="cancel-order bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                                    data-order-id="<%= order._id %>">
+                                    Cancel Order
+                                </button>
+                            </div>
+                        <% } %>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <div class="text-center py-8">
+                    <p class="text-gray-600 text-lg">You haven't placed any orders yet.</p>
+                    <a href="/" class="text-blue-500 hover:text-blue-700 mt-4 inline-block">Continue Shopping</a>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.cancel-order').forEach(button => {
+            button.addEventListener('click', async function() {
+                if (!confirm('Are you sure you want to cancel this order?')) {
+                    return;
+                }
+
+                const orderId = this.dataset.orderId;
+                try {
+                    const response = await fetch('/cancelorder', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ orderId })
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert(data.error);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to cancel order');
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

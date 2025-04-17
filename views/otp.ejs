@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification</title>
+    <link rel="stylesheet" href="/stylesheet/otp.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-zinc-900">
+    <div class="main bg-stone-700">
+        <div class="main_head">
+            <center><h1>Welcome <%= name %> </h1></center>
+            <p>Hi <%= name %>, welcome to Trendnest. We have sent an OTP to your Gmail account. Please enter the OTP to proceed.</p>
+        </div>
+        <div class="form_section">
+            <form action="/otp" method="post">
+                <% if(err){%>
+                    <script>
+                        setTimeout(() => {
+                            document.querySelector('.error-message').remove();
+                        }, 3000);
+                    </script>
+                    <center><p class="text-sm text-red-500 mt-1 error-message"><%= err %></p></center>
+                <%}%>
+                <input type="number" placeholder="Enter your OTP" name="otp" required>
+                <input type="submit" value="Verify" class="bg-blue-500 hover:bg-sky-700">
+            </form>
+        </div>
+    </div>
+</body>
+</html>

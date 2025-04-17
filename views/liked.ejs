@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liked Products - TrendNest</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        .product-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: fill;
+        }
+        .like-button {
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        .like-button.liked {
+            color: red;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="bg-zinc-300 main">
+        <% if(user) { %>
+            <div class="user-info bg-gray-800 p-4 text-white flex justify-between">
+                <div class="flex items-center space-x-4">
+                    <img src="<%=user.imgurl || '/images/default/profile_default.webp' %>" alt="Profile" class="w-12 h-12 rounded-full">
+                    <div>
+                        <h2 class="text-xl font-bold"><%= user.name %></h2>
+                        <p class="text-gray-400"><%= user.email %></p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/" class="text-white hover:text-gray-300">Home</a>
+                </div>
+            </div>
+        <% } %>
+
+        <h1 class="text-2xl font-bold m-8">Your Liked Products</h1>
+
+        <% if (error) { %>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative m-4" role="alert">
+                <span class="block sm:inline"><%= error %></span>
+            </div>
+        <% } %>
+
+        <div class="product-grid">
+            <% if (products && products.length > 0) { %>
+                <% products.forEach(function(product) { %>
+                    <% if (product) { %>
+                        <div class="product-card">
+                            <img src="<%= product.imgurl || '/images/default/product_default.webp' %>" alt="<%= product.productName || 'Product' %>" class="product-image">
+                            <div class="p-4">
+                                <h3 class="font-bold text-lg"><%= product.brand || 'Unknown Brand' %></h3>
+                                <p class="text-gray-600"><%= product.productName || 'Unknown Product' %></p>
+                                <p class="font-bold mt-2">₹<%= product.prize || '0' %></p>
+                                <p class="text-green-600"><%= product.discount || '0' %>% off</p>
+                                <button class="like-button liked mt-2" data-product-id="<%= product._id %>">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                            </div>
+                        </div>
+                    <% } %>
+                <% }) %>
+            <% } else { %>
+                <div class="text-center w-full py-8">
+                    <p class="text-gray-600 text-lg">You haven't liked any products yet.</p>
+                    <a href="/" class="text-blue-500 hover:text-blue-700 mt-4 inline-block">Browse Products</a>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.like-button').forEach(button => {
+            button.addEventListener('click', async function() {
+                const productId = this.dataset.productId;
+                try {
+                    const response = await fetch('/like', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ productId })
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        if (data.action === 'unliked') {
+                            this.classList.remove('liked');
+                            // Remove the product card from the view
+                            this.closest('.product-card').remove();
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

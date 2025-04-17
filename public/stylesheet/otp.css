@@ -1,0 +1,46 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    color: #fff;
+}
+body{
+    height: 100vh;
+    display: grid;
+    justify-items: center;
+    align-content: center;
+}
+.main{
+ border: 2px solid black;
+ height: 400px;
+ padding: 20px;
+ border-radius: 10px;
+}
+.main .main_head{
+    width: 350px;
+}
+.main .main_head h1{
+    text-transform: capitalize;
+    margin-bottom: 50px;
+    font-size: 1.5rem;
+}
+.main .main_head p{
+    font-size: 1.20rem;
+}
+.main .form_section input[type="number"]{
+    height: 40px;
+    width: 150px;
+    border-radius: 10px;
+    margin-top: 50px;
+    margin-left: 50px;
+    border: 2px solid #fff;
+    padding: 10px;
+}
+.main .form_section input[type="submit"]{
+    height: 40px;
+    width: 70px;
+    margin-left: 25px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    border: 2px solid #fff;
+}

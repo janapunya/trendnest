@@ -1,0 +1,29 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.main{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.form h1 {
+    color: #fff;
+    text-transform: capitalize;
+    text-align: center;
+    margin-bottom: 20px;
+}
+.form form{
+    display: grid;
+    gap: 20px;
+}
+.form form input{
+    height: 50px;
+    width: 300px;
+    border: 2px solid rgb(249, 247, 247) ;
+    border-radius: 10px;
+    color: #fff;
+    padding: 10px;
+}
