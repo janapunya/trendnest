@@ -807,14 +807,14 @@ app.get("/sellerorders", async (req, res) => {
         .populate('products.productId')
         .sort({ createdAt: -1 });
 
-        res.render("sellerOrders", { 
+        res.render("sellerorders", { 
             user,
             orders,
             error: null
         });
     } catch (err) {
         console.error("Error fetching seller orders:", err);
-        res.render("sellerOrders", { 
+        res.render("sellerorders", { 
             user: null,
             orders: [],
             error: "Failed to load orders"
