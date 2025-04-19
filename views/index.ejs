@@ -115,18 +115,6 @@
       </div>
     </div>
 
-    <div class="category">
-      <h1>Catagory</h1>
-      <div>
-        <div><p><i class="fa-solid fa-palette"></i> personal Care</p></div>
-        <div><p><i class="fa-solid fa-clock"></i> Accessorice</p></div>
-        <div><p><i class="fa-solid fa-shirt"></i> Clats</p></div>
-        <div><p><i class="fa-solid fa-spray-can-sparkles"></i> Perfume</p></div>
-        <div><p><i class="fa-solid fa-shoe-prints"></i> Sneakers</p></div>
-        <div><p><i class="fa-solid fa-bag-shopping"></i> Bags</p></div>
-
-      </div>
-    </div>
       
     <div class="Electronic">
       <h1 class="product_type">Best of Electronics</h1>
@@ -138,7 +126,7 @@
                  class="product-image" 
                  style="width: 100%; height: 200px; object-fit: cover;"
                  onerror="this.onerror=null; this.src='/images/default-product.png'">
-            <div class="p-4">
+            <div class="p-4" style="width: 100%; height: 100%; padding: 20px;">
               <form action="/addcart" method="post" class="hidden">
                 <input type="text" value="<%= product._id %>" name="productId">
                 <input type="submit" value="Add to Cart" id="add_cart">
